@@ -280,18 +280,6 @@ temp_pkg_dir() do project_path
     @testset "add julia" begin
         @test_throws CommandError Pkg.add("julia")
     end
-
-    @testset "up in Project without manifest" begin
-        mktempdir() do dir
-            cp(joinpath(@__DIR__, "test_packages", "UnregisteredWithProject"), joinpath(dir, "UnregisteredWithProject"))
-            cd(joinpath(dir, "UnregisteredWithProject")) do
-               with_current_env() do
-                    Pkg.up()
-                    @test haskey(Pkg.installed(), "Example")
-                end
-            end
-        end
-    end
 end
 
 temp_pkg_dir() do project_path
@@ -300,10 +288,22 @@ temp_pkg_dir() do project_path
         @test haskey(Pkg.installed(), TEST_PKG.name)
         Pkg.rm(TEST_PKG.name)
     end
+
+    @testset "up in Project without manifest" begin
+        mktempdir() do dir
+            cp(joinpath(@__DIR__, "test_packages", "UnregisteredWithProject"), joinpath(dir, "UnregisteredWithProject"))
+            cd(joinpath(dir, "UnregisteredWithProject")) do
+                with_current_env() do
+                        Pkg.up()
+                        @test haskey(Pkg.installed(), "Example")
+                end
+            end
+        end
+    end
 end
 
 @testset "parse package url win" begin
-    @test typeof(Pkg.REPLMode.parse_package("https://github.com/abc/ABC.jl"; context=Pkg.REPLMode.CMD_ADD)) == PackageSpec
+    @test typeof(Pkg.REPLMode.parse_package("https://github.com/abc/ABC.jl"; add_or_develop=true)) == PackageSpec
 end
 
 @testset "preview generate" begin

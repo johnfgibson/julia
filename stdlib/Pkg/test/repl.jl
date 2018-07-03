@@ -293,6 +293,7 @@ temp_pkg_dir() do project_path; cd(project_path) do
             pkg"dev SubModule2"
             pkg"add Random"
             pkg"add Example"
+            pkg"add JSON"
             pkg"build"
             @eval using BigProject
             pkg"build BigProject"
